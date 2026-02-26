@@ -1,0 +1,37 @@
+camunda:
+  admin:
+    client_id: admin-cli
+    username: admin
+    password: admin
+  web-modeler:
+    client_id: web-modeler
+    username: demo
+    password: demo
+
+# Tenants in the system
+tenants:
+  - id: SL
+    name: Sri Lanka Tenant
+  - id: IND
+    name: India Tenant
+
+# Groups in the system
+groups:
+  - groupId: sl-team
+    name: SL Team
+  - groupId: ind-team
+    name: IND Team
+
+# Group-Tenant Assignments
+groupTenantAssignments:
+  - group: sl-team
+    tenant: SL
+  - group: ind-team
+    tenant: IND
+
+# Group-Role Assignments (same role to all groups for now)
+groupRoleAssignments:
+  - group: sl-team
+    roles: [readonly-admin]
+  - group: ind-team
+    roles: [readonly-admin]
