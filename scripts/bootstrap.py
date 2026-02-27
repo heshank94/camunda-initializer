@@ -1,6 +1,6 @@
 import logging
-from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda
-from auth import get_token
+from scripts.utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda
+from scripts.auth import get_token
 
 IDENTITY = "http://localhost:8088/v2"
 DOMAIN = "http://localhost:18080"

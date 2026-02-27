@@ -1,5 +1,5 @@
 import logging
-from utils import load_config
+from scripts.utils import load_config
 import requests
 
 DOMAIN = "http://localhost:18080"
