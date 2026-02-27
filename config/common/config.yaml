@@ -7,10 +7,3 @@ camunda:
     client_id: web-modeler
     username: demo
     password: demo
-
-# Tenants in the system
-tenants:
-  - id: SL
-    name: Sri Lanka Tenant
-  - id: IND
-    name: India Tenant

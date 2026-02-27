@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 
 # ------------------ CONFIG ------------------
-def load_config(file_path="config.yaml"):
+def load_config(file_path="../config.yaml"):
     if not os.path.exists(file_path):
         raise RuntimeError(f"Config file not found: {file_path}")
     with open(file_path) as f:
@@ -77,3 +77,44 @@ def generate_users_for_keycloak(config):
             ]
         })        
     return keycloak_users
+
+
+def generate_groups(config):
+    groups = []
+
+    for tenant in config.get("tenants", []):
+        tenant_id = tenant["id"]
+        groups.append({
+            "groupId": f"{tenant_id.lower()}-team",
+            "name": f"{tenant_id.upper()} Team"
+        })
+    return groups
+
+
+def generate_group_tenant_assignments(config):
+    assignments = []
+
+    for tenant in config.get("tenants", []):
+        tenant_id = tenant["id"]
+
+        assignments.append({
+            "group": f"{tenant_id.lower()}-team",
+            "tenant": tenant_id
+        })
+    return assignments
+
+
+def generate_group_role_assignments(config, roles=None):
+    if roles is None:
+        roles = ["readonly-admin"]
+
+    assignments = []
+
+    for tenant in config.get("tenants", []):
+        tenant_id = tenant["id"]
+
+        assignments.append({
+            "group": f"{tenant_id.lower()}-team",
+            "roles": roles
+        })
+    return assignments

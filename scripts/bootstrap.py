@@ -1,6 +1,6 @@
 import logging
-from scripts.utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda
-from scripts.auth import get_token
+from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments
+from auth import get_token
 
 IDENTITY = "http://localhost:8088/v2"
 DOMAIN = "http://localhost:18080"
@@ -343,11 +343,11 @@ def main():
         create_tenant(web_modeler_token, tenant)
 
     # Create Camunda Groups
-    for group in cfg.get("groups", []):
+    for group in generate_groups(cfg):
         create_group(web_modeler_token, group)
 
     # Assign Roles to Groups
-    for group_roles in cfg.get("groupRoleAssignments", []):
+    for group_roles in generate_group_role_assignments(cfg, ["readonly-admin"]):
         for role_id in group_roles["roles"]:
             assign_role_to_group(web_modeler_token, role_id, group_roles["group"])
     
@@ -357,7 +357,7 @@ def main():
         create_authorization(web_modeler_token, user["username"])
 
     # Assign Groups to Tenants
-    for assignment in cfg.get("groupTenantAssignments", []):
+    for assignment in generate_group_tenant_assignments(cfg):
         assign_group_to_tenant(web_modeler_token, assignment["group"], assignment["tenant"])
 
 

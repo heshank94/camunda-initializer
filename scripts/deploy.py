@@ -1,8 +1,8 @@
-from scripts.utils import load_config
+from utils import load_config
 import requests
 import logging
 import os
-from scripts.auth import get_token_with_username_and_password
+from auth import get_token_with_username_and_password
 
 DEPLOY = "http://localhost:8088/v2/deployments"
 CONFIG_FILE = "config.yaml"
