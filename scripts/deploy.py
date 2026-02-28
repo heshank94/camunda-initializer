@@ -1,5 +1,6 @@
 from utils import load_config
 import requests
+import argparse
 import logging
 import os
 from auth import get_token_with_username_and_password
@@ -46,7 +47,15 @@ def validate_deployments(entries):
 
 
 def main():
-    cfg = load_config()
+    parser = argparse.ArgumentParser(description="Deploy BPMN files")
+    parser.add_argument(
+        "--region",
+        required=True,
+        help="Region config file (example: config/tenants.asia.yaml)"
+    )
+    args = parser.parse_args()
+
+    cfg = load_config(args.region)
     deployments = cfg.get("deployments", [])
 
     if not deployments:
@@ -77,7 +86,8 @@ def main():
         try:
             token = get_token_with_username_and_password(
                 username=username,
-                password=password
+                password=password,
+                cfg=cfg
             )
         except Exception as e:
             log.error("Authentication failed | user=%s | error=%s", username, str(e))

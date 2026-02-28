@@ -1,4 +1,5 @@
 import logging
+import argparse
 from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments
 from auth import get_token
 
@@ -329,10 +330,17 @@ def assign_group_to_tenant(token, group_id, tenant_id):
 
 
 def main():
-    cfg = load_config()
-    
-    admin_token = get_token("admin")
-    web_modeler_token = get_token("web-modeler")
+    parser = argparse.ArgumentParser(description="Deploy BPMN files")
+    parser.add_argument(
+        "--region",
+        required=True,
+        help="Region config file (example: config/tenants.asia.yaml)"
+    )
+    args = parser.parse_args()
+
+    cfg = load_config(args.region)
+    admin_token = get_token("admin", cfg)
+    web_modeler_token = get_token("web-modeler", cfg)
     
     # Generate Keycloak users and create them in Keycloak
     for user in generate_users_for_keycloak(cfg):

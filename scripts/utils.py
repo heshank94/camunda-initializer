@@ -12,11 +12,27 @@ logging.basicConfig(
 )
 
 # ------------------ CONFIG ------------------
-def load_config(file_path="../config.yaml"):
-    if not os.path.exists(file_path):
-        raise RuntimeError(f"Config file not found: {file_path}")
-    with open(file_path) as f:
-        return yaml.safe_load(f)
+def load_yaml(path):
+    if not os.path.exists(path):
+        raise RuntimeError(f"Config file not found: {path}")
+    with open(path) as f:
+        return yaml.safe_load(f) or {}
+
+
+def deep_merge(a, b):
+    result = dict(a)
+    for k, v in b.items():
+        if k in result and isinstance(result[k], dict) and isinstance(v, dict):
+            result[k] = deep_merge(result[k], v)
+        else:
+            result[k] = v
+    return result
+
+
+def load_config(region_file):
+    base = load_yaml("../config/base.yaml")
+    region = load_yaml(region_file)
+    return deep_merge(base, region)
 
 # ------------------ HTTP ------------------
 def headers(token, content_type="application/json"):
