@@ -1,5 +1,4 @@
 import logging
-from utils import load_config
 import requests
 
 DOMAIN = "http://localhost:18080"
@@ -24,8 +23,7 @@ def request_token(data: dict, url) -> str:
 
     return body["access_token"]
 
-def get_token(client: str) -> str:
-    cfg = load_config()
+def get_token(client: str, cfg) -> str:
     client_cfg = cfg["camunda"][client]
     
     url = ADMIN_TOKEN_URL if client == "admin" else TOKEN_URL
@@ -39,8 +37,7 @@ def get_token(client: str) -> str:
         "password": client_cfg["password"]
     }, url)
 
-def get_token_with_username_and_password(username: str, password: str) -> str:
-    cfg = load_config()
+def get_token_with_username_and_password(username: str, password: str, cfg) -> str:
     client_id = cfg["camunda"]["auth"]["client_id"]
     log.info("Requesting token | user=%s", username)
 
