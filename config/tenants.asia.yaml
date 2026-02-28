@@ -1,0 +1,5 @@
+tenants:
+  - id: SL
+    name: Sri Lanka Tenant
+  - id: IND
+    name: India Tenant

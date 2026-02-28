@@ -1,0 +1,3 @@
+tenants:
+  - id: US
+    name: United States Tenant
