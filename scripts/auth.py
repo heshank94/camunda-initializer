@@ -38,12 +38,11 @@ def get_token(client: str, cfg) -> str:
     }, url)
 
 def get_token_with_username_and_password(username: str, password: str, cfg) -> str:
-    client_id = cfg["camunda"]["auth"]["client_id"]
     log.info("Requesting token | user=%s", username)
 
     return request_token({
         "grant_type": "password",
-        "client_id": client_id,
+        "client_id": "web-modeler",
         "username": username,
         "password": password
     }, TOKEN_URL)

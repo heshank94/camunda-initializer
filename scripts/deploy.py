@@ -1,4 +1,4 @@
-from utils import load_config
+from utils import load_config, generate_users_for_camunda
 import requests
 import argparse
 import logging
@@ -6,8 +6,7 @@ import os
 from auth import get_token_with_username_and_password
 
 DEPLOY = "http://localhost:8088/v2/deployments"
-CONFIG_FILE = "config.yaml"
-PROCESS_FOLDER = "processes"
+PROCESS_FOLDER = "../processes"
 TIMEOUT = 15
 log = logging.getLogger("deploy-module")
 
@@ -40,10 +39,10 @@ def deploy_file(token, tenant, path):
         )
 
 
-def validate_deployments(entries):
+def validate_users(entries):
     for i, d in enumerate(entries):
         if "tenant" not in d or "username" not in d or "password" not in d:
-            raise ValueError(f"Invalid deployment entry at index {i}: {d}")
+            raise ValueError(f"Invalid User entry at index {i}: {d}")
 
 
 def main():
@@ -56,13 +55,13 @@ def main():
     args = parser.parse_args()
 
     cfg = load_config(args.region)
-    deployments = cfg.get("deployments", [])
-
-    if not deployments:
-        log.warning("No deployments section found. Nothing to deploy.")
+    
+    users = generate_users_for_camunda(cfg)
+    if not users:
+        log.error("User generation failed")
         return
 
-    validate_deployments(deployments)
+    validate_users(users)
 
     if not os.path.isdir(PROCESS_FOLDER):
         raise RuntimeError(f"Process folder not found: {PROCESS_FOLDER}")
@@ -76,7 +75,7 @@ def main():
         log.warning("No BPMN files found in folder: %s", PROCESS_FOLDER)
         return
 
-    for entry in deployments:
+    for entry in users:
         tenant = entry["tenant"]
         username = entry["username"]
         password = entry["password"]
