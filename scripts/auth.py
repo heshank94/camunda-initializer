@@ -39,7 +39,7 @@ def get_token(client: str, cfg) -> str:
         "password": client_cfg["password"]
     }, url)
 
-def get_token_with_username_and_password(username: str, password: str, cfg) -> str:
+def get_token_with_username_and_password(username: str, password: str) -> str:
     log.info("Requesting token | user=%s", username)
 
     return request_token({
