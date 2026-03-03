@@ -335,7 +335,7 @@ def main():
     parser.add_argument(
         "--region",
         required=True,
-        help="Region config file (example: config/tenants.asia.yaml)"
+        help="Region config file"
     )
     args = parser.parse_args()
 
