@@ -87,8 +87,7 @@ def main():
         try:
             token = get_token_with_username_and_password(
                 username=username,
-                password=password,
-                cfg=cfg
+                password=password
             )
         except Exception as e:
             log.error("Authentication failed | user=%s | error=%s", username, str(e))
