@@ -5,5 +5,5 @@ camunda:
     password: admin
   web-modeler:
     client_id: web-modeler
-    username: demo
-    password: demo
+    username: ${CAMUNDA_WEB_MODELER_USERNAME}
+    password: ${CAMUNDA_WEB_MODELER_PASSWORD}

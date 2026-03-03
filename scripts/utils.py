@@ -12,11 +12,20 @@ logging.basicConfig(
 )
 
 # ------------------ CONFIG ------------------
+# def load_yaml(path):
+#     if not os.path.exists(path):
+#         raise RuntimeError(f"Config file not found: {path}")
+#     with open(path) as f:
+#         return yaml.safe_load(f) or {}
+
 def load_yaml(path):
     if not os.path.exists(path):
         raise RuntimeError(f"Config file not found: {path}")
+    
     with open(path) as f:
-        return yaml.safe_load(f) or {}
+        content = f.read()
+        content = os.path.expandvars(content)
+        return yaml.safe_load(content) or {}
 
 
 def deep_merge(a, b):
