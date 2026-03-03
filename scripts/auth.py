@@ -2,11 +2,11 @@ import logging
 import requests
 from utils import get_required_env
 
-CAMUNDA_DOMAIN = get_required_env("CAMUNDA_DOMAIN")
+KEYCLOAK_DOMAIN = get_required_env("KEYCLOAK_DOMAIN")
 CAMUNDA_REALM = get_required_env("CAMUNDA_REALM")
 
-ADMIN_TOKEN_URL = f"{CAMUNDA_DOMAIN}/auth/realms/master/protocol/openid-connect/token"
-TOKEN_URL = f"{CAMUNDA_DOMAIN}/auth/realms/{CAMUNDA_REALM}/protocol/openid-connect/token"
+ADMIN_TOKEN_URL = f"{KEYCLOAK_DOMAIN}/auth/realms/master/protocol/openid-connect/token"
+TOKEN_URL = f"{KEYCLOAK_DOMAIN}/auth/realms/{CAMUNDA_REALM}/protocol/openid-connect/token"
 log = logging.getLogger("auth-module")
 
 # ------------------ TOKEN ------------------

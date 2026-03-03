@@ -3,11 +3,11 @@ import argparse
 from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments, get_required_env
 from auth import get_token
 
-CAMUNDA_DOMAIN = get_required_env("CAMUNDA_DOMAIN")
+KEYCLOAK_DOMAIN = get_required_env("KEYCLOAK_DOMAIN")
 CAMUNDA_REALM = get_required_env("CAMUNDA_REALM")
 CAMUNDA_IDENTITY_URL = get_required_env("CAMUNDA_IDENTITY_URL")
 
-KEYCLOAK_ADMIN_URL = f"{CAMUNDA_DOMAIN}/auth/admin/realms/{CAMUNDA_REALM}"
+KEYCLOAK_ADMIN_URL = f"{KEYCLOAK_DOMAIN}/auth/admin/realms/{CAMUNDA_REALM}"
 
 log = logging.getLogger("bootstrap-module")
 
