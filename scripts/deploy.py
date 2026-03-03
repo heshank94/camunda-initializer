@@ -1,13 +1,15 @@
-from utils import load_config, generate_users_for_camunda
+from utils import load_config, generate_users_for_camunda, get_required_env
 import requests
 import argparse
 import logging
 import os
 from auth import get_token_with_username_and_password
 
-DEPLOY = "http://localhost:8088/v2/deployments"
-PROCESS_FOLDER = "../processes"
+CAMUNDA_IDENTITY_URL = get_required_env("CAMUNDA_IDENTITY_URL")
+
+DEPLOY_URL = f"{CAMUNDA_IDENTITY_URL}/deployments"
 TIMEOUT = 15
+PROCESS_FOLDER = "../processes"
 log = logging.getLogger("deploy-module")
 
 def headers(token): return {"Authorization": f"Bearer {token}"}
@@ -20,7 +22,7 @@ def deploy_file(token, tenant, path):
 
         data = {"tenantId": tenant}
         r = requests.post(
-            DEPLOY,
+            DEPLOY_URL,
             headers=headers(token),
             files=files,
             data=data,

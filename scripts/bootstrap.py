@@ -1,13 +1,14 @@
 import logging
 import argparse
-from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments
+from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments, get_required_env
 from auth import get_token
 
-IDENTITY = "http://localhost:8088/v2"
-DOMAIN = "http://localhost:18080"
-REALM = "camunda-platform"
-KEYCLOAK_ADMIN_URL = f"{DOMAIN}/auth/admin/realms/{REALM}"
-WEB_MODELER_ROLE = "Web Modeler"
+CAMUNDA_DOMAIN = get_required_env("CAMUNDA_DOMAIN")
+CAMUNDA_REALM = get_required_env("CAMUNDA_REALM")
+CAMUNDA_IDENTITY_URL = get_required_env("CAMUNDA_IDENTITY_URL")
+
+KEYCLOAK_ADMIN_URL = f"{CAMUNDA_DOMAIN}/auth/admin/realms/{CAMUNDA_REALM}"
+
 log = logging.getLogger("bootstrap-module")
 
 
@@ -92,7 +93,7 @@ def create_keycloak_user(token, user_data):
 
     if response.status_code in (200, 201):
         log.info("User created | username=%s", username)
-        assign_realm_role_to_user(token, username, WEB_MODELER_ROLE)
+        assign_realm_role_to_user(token, username, "Web Modeler")
     else:
         log.error(
             "User creation failed | username=%s | status=%s | body=%s",
@@ -101,7 +102,7 @@ def create_keycloak_user(token, user_data):
 
 
 def tenant_exists(token, tenant_id):
-    r = request("GET", f"{IDENTITY}/tenants/{tenant_id}", token)
+    r = request("GET", f"{CAMUNDA_IDENTITY_URL}/tenants/{tenant_id}", token)
     return r.status_code == 200
 
 
@@ -112,7 +113,7 @@ def create_tenant(token, tenant):
 
     r = request(
         "POST",
-        f"{IDENTITY}/tenants",
+        f"{CAMUNDA_IDENTITY_URL}/tenants",
         token,
         json={"tenantId": tenant["id"], "name": tenant["name"]}
     )
@@ -125,7 +126,7 @@ def create_tenant(token, tenant):
 
 
 def group_exists(token, group_id):
-    r = request("GET", f"{IDENTITY}/groups/{group_id}", token)
+    r = request("GET", f"{CAMUNDA_IDENTITY_URL}/groups/{group_id}", token)
     return r.status_code == 200
 
 
@@ -136,7 +137,7 @@ def create_group(token, group):
 
     r = request(
         "POST",
-        f"{IDENTITY}/groups",
+        f"{CAMUNDA_IDENTITY_URL}/groups",
         token,
         json={"groupId": group["groupId"], "name": group["name"]}
     )
@@ -151,7 +152,7 @@ def create_group(token, group):
 def role_exists_on_group(token, role_id, group_id):
     r = request(
         "POST",
-        f"{IDENTITY}/groups/{group_id}/roles/search",
+        f"{CAMUNDA_IDENTITY_URL}/groups/{group_id}/roles/search",
         token,
         json={
             "sort": [{"field": "name", "order": "ASC"}],
@@ -176,7 +177,7 @@ def assign_role_to_group(token, role_id, group_id):
 
     r = request(
         "PUT",
-        f"{IDENTITY}/roles/{role_id}/groups/{group_id}",
+        f"{CAMUNDA_IDENTITY_URL}/roles/{role_id}/groups/{group_id}",
         token
     )
 
@@ -190,7 +191,7 @@ def assign_role_to_group(token, role_id, group_id):
 def user_in_group(token, username, group_id):
     r = request(
         "POST",
-        f"{IDENTITY}/groups/{group_id}/users/search",
+        f"{CAMUNDA_IDENTITY_URL}/groups/{group_id}/users/search",
         token,
         json={
             "sort": [{"field": "username", "order": "ASC"}],
@@ -214,7 +215,7 @@ def assign_user_to_group(token, username, group_id):
 
     r = request(
         "PUT",
-        f"{IDENTITY}/groups/{group_id}/users/{username}",
+        f"{CAMUNDA_IDENTITY_URL}/groups/{group_id}/users/{username}",
         token
     )
 
@@ -228,7 +229,7 @@ def assign_user_to_group(token, username, group_id):
 def authorization_exists(token, username):
     r = request(
         "POST",
-        f"{IDENTITY}/authorizations/search",
+        f"{CAMUNDA_IDENTITY_URL}/authorizations/search",
         token,
         json={
             "sort": [
@@ -265,7 +266,7 @@ def create_authorization(token, username):
 
     r = request(
         "POST",
-        f"{IDENTITY}/authorizations",
+        f"{CAMUNDA_IDENTITY_URL}/authorizations",
         token,
         json={
             "ownerId": username,
@@ -295,7 +296,7 @@ def create_authorization(token, username):
 def group_assigned_to_tenant(token, group_id, tenant_id):
     r = request(
         "POST",
-        f"{IDENTITY}/tenants/{tenant_id}/groups/search",
+        f"{CAMUNDA_IDENTITY_URL}/tenants/{tenant_id}/groups/search",
         token,
         json={"page": {"from": 0, "limit": 100}}
     )
@@ -317,7 +318,7 @@ def assign_group_to_tenant(token, group_id, tenant_id):
 
     r = request(
         "PUT",
-        f"{IDENTITY}/tenants/{tenant_id}/groups/{group_id}",
+        f"{CAMUNDA_IDENTITY_URL}/tenants/{tenant_id}/groups/{group_id}",
         token
     )
 
