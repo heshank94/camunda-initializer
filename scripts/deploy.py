@@ -47,6 +47,7 @@ def validate_users(entries):
             raise ValueError(f"Invalid User entry at index {i}: {d}")
 
 
+# TODO - Find a way to only deploy to a specific tenant in a region and make sure this is applicable with CICD process
 def main():
     parser = argparse.ArgumentParser(description="Deploy BPMN files")
     parser.add_argument(
