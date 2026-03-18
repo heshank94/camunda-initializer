@@ -1,4 +1,4 @@
-from utils import load_config, generate_users_for_camunda, get_required_env
+from utils import load_config, generate_users_for_camunda, get_required_env, tenant_selection
 import requests
 import argparse
 import logging
@@ -55,10 +55,20 @@ def main():
         required=True,
         help="Region config file"
     )
+    
+    parser.add_argument(
+        "--tenants",
+        required=False,
+        help="Tenants List"
+    )
+    
     args = parser.parse_args()
 
     cfg = load_config(args.region)
     
+    if args.tenants:
+        cfg = tenant_selection(args, cfg)
+        
     users = generate_users_for_camunda(cfg)
     if not users:
         log.error("User generation failed")

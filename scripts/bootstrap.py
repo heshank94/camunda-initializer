@@ -1,6 +1,6 @@
 import logging
 import argparse
-from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments, get_required_env
+from utils import load_config, request, generate_users_for_keycloak, generate_users_for_camunda, generate_groups, generate_group_tenant_assignments, generate_group_role_assignments, get_required_env, tenant_selection
 from auth import get_token
 
 KEYCLOAK_DOMAIN = get_required_env("KEYCLOAK_DOMAIN")
@@ -337,12 +337,22 @@ def main():
         required=True,
         help="Region config file"
     )
+    
+    parser.add_argument(
+        "--tenants",
+        required=False,
+        help="Tenants List"
+    )
+    
     args = parser.parse_args()
 
     cfg = load_config(args.region)
     admin_token = get_token("admin", cfg)
     web_modeler_token = get_token("web-modeler", cfg)
     
+    if args.tenants:
+        cfg = tenant_selection(args, cfg)
+        
     # Generate Keycloak users and create them in Keycloak
     for user in generate_users_for_keycloak(cfg):
         create_keycloak_user(admin_token, user)

@@ -150,3 +150,18 @@ def get_required_env(name: str) -> str:
     if value is None:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
+
+
+def tenant_selection(args, cfg):
+    tenant_filters = [t.strip().lower() for t in args.tenants.split(",")]
+
+    filtered_tenants = [
+        t for t in cfg.get("tenants", [])
+        if t["id"].lower() in tenant_filters
+    ]
+
+    if not filtered_tenants:
+        raise RuntimeError(f"No tenants found for ids={args.tenants}")
+
+    cfg["tenants"] = filtered_tenants
+    return cfg
